@@ -23,9 +23,6 @@ def make_img(filename):
     filename=str(uuid.uuid4())+'.jpg'
     # 先压缩
     img.save(filename)
-    img=cv2.imread(filename)
-    cv2.imwrite("1"+filename,img,[cv2.IMWRITE_JPEG_OPTIMIZE,50])
-
 
 make_img('ANTOINE-LAURENT-1.jpg')
 
