@@ -3,6 +3,6 @@ from django.urls import path
 from  .views import *
 urlpatterns = [
     # 绑定路由
-    path('register/', Register.as_view(), name='Register'),
-    path('login/', Login.as_view(), name='Login')
+    path('upload_file/', upload_file.as_view(), name='upload_file')
+
 ]
