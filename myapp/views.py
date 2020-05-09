@@ -9,6 +9,52 @@ import os
 from django_test.settings import UPLOAD_ROOT
 import cv2
 from PIL import Image,ImageDraw,ImageFont
+import upyun
+
+# 文件操作
+class file_move(APIView):
+    # 删除
+    def delete(self,request):
+        filename = request.GET.get('filename')
+        print(filename)
+        up = upyun.UpYun('mdsave', username='ljq', password='m3QsiAaLhMvB8owYEwdl1l2atviBVF3U')
+        # 根据路径删除文件
+        up.delete('/%s'%filename)
+        return Response({'code':200,'msg':'删除成功'})
+    # 移动文件
+    def get(self,request):
+        move = request.GET.get('move')
+        # 获取路径
+        print(move)
+        up = upyun.UpYun('mdsave', username='ljq', password='m3QsiAaLhMvB8owYEwdl1l2atviBVF3U')
+        # 根据路径移动文件
+        up.move('/jwt.png', '/kaoshi/jwt.png')
+        return Response({'code':200,'msg':'移动成功'})
+
+# 上传又拍云
+class Upyun(APIView):
+    # 创建文件夹
+    def get(self,request):
+        dname=request.GET.get('dname')
+        print(dname)
+        up = upyun.UpYun('mdsave', username='ljq', password='m3QsiAaLhMvB8owYEwdl1l2atviBVF3U')
+        # 根据获取的名字创建文件夹
+        up.mkdir('/%s'%dname)
+        return  Response({"code":200,'msg':'创建成功'})
+
+    #上传文件
+    def post(self,request):
+        # 获取文件
+        file=request.FILES.get('file')
+
+        print(file.name)
+        up=upyun.UpYun('mdsave',username='ljq',password='m3QsiAaLhMvB8owYEwdl1l2atviBVF3U')
+        # 分块上传
+        for chunks in file.chunks():
+            up.put('/%s'%file.name,chunks,checksum=True)
+
+        return Response({'code':200,'msg':'上传成功','filename':file.name})
+
 
 # 加水印
 def make_img(filename):
