@@ -7,4 +7,7 @@ urlpatterns = [
     path('upyun/', Upyun.as_view(), name='Upyun'),
     path('file_move/', file_move.as_view(), name='file_move'),
 
+
+    path('show_goods/', Show_goods.as_view(), name='Show_goods'),
+
 ]

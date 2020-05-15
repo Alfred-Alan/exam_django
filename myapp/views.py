@@ -1,5 +1,6 @@
 import uuid
 
+from django.db.models import Q
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.views import Response
@@ -10,6 +11,40 @@ from django_test.settings import UPLOAD_ROOT
 import cv2
 from PIL import Image,ImageDraw,ImageFont
 import upyun
+
+from myapp.serializes import *
+
+class Show_goods(APIView):
+
+    def get(self,request):
+        page=int(request.GET.get('page',1))
+        size=int(request.GET.get('size',1))
+        # 获取关键字
+        text = request.GET.get('text',None)
+        # 排序变量
+        order = request.GET.get('order',None)
+
+        # 求出切片位置
+        start = (page-1)*size
+        end = page*size
+
+        # 判断是否有排序
+        if order:
+            goods=Goods.objects.all().order_by(order)[start:end]
+        else:
+            goods=Goods.objects.all()[start:end]
+        # 判断是否有关键字
+        if text:
+            goods=Goods.objects.filter(Q(name__contains=text)|Q(des__contains=text)).all()[start:end]
+            count = len(goods)
+        else:
+            # 计算长度
+            count = len(Goods.objects.all())
+
+        # 序列化数据
+        goods_Ser= goodSer(goods,many=True)
+        # count = len(Goods.objects.all())
+        return Response({"data":goods_Ser.data,"total":count})
 
 # 文件操作
 class file_move(APIView):
